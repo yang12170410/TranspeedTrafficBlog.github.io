@@ -304,8 +304,8 @@
 <li><p>摄像机验证</p>
 <p>RTSP摄像机请确保和设备在同一网络下，测试方法：在盒子里ping 相机的IP</p>
 <p>rtsp地址格式参考如下：</p>
-<p>大华：rtsp://admin:<a href="mailto:&#x65;&#x62;&#49;&#x32;&#x33;&#52;&#x35;&#54;&#64;&#x31;&#x39;&#x32;&#x2e;&#49;&#x36;&#x38;&#46;&#49;&#46;&#49;&#x31;&#x35;">&#x65;&#x62;&#49;&#x32;&#x33;&#52;&#x35;&#54;&#64;&#x31;&#x39;&#x32;&#x2e;&#49;&#x36;&#x38;&#46;&#49;&#46;&#49;&#x31;&#x35;</a>:554/cam/realmonitor?channel=1&amp;subtype=0</p>
-<p>海康：rtsp://admin:<a href="mailto:&#x65;&#98;&#x31;&#50;&#x33;&#x34;&#53;&#x36;&#x40;&#x31;&#57;&#x32;&#x2e;&#49;&#54;&#x38;&#46;&#49;&#x2e;&#49;&#54;&#x38;">&#x65;&#98;&#x31;&#50;&#x33;&#x34;&#53;&#x36;&#x40;&#x31;&#57;&#x32;&#x2e;&#49;&#54;&#x38;&#46;&#49;&#x2e;&#49;&#54;&#x38;</a>:554/h264/ch1/main/av_stream</p>
+<p>大华：rtsp://admin:<a href="mailto:&#x65;&#x62;&#49;&#x32;&#x33;&#x34;&#x35;&#54;&#64;&#49;&#57;&#50;&#x2e;&#x31;&#x36;&#56;&#x2e;&#x31;&#46;&#49;&#49;&#x35;">&#x65;&#x62;&#49;&#x32;&#x33;&#x34;&#x35;&#54;&#64;&#49;&#57;&#50;&#x2e;&#x31;&#x36;&#56;&#x2e;&#x31;&#46;&#49;&#49;&#x35;</a>:554/cam/realmonitor?channel=1&amp;subtype=0</p>
+<p>海康：rtsp://admin:<a href="mailto:&#101;&#x62;&#49;&#50;&#x33;&#52;&#53;&#54;&#64;&#x31;&#57;&#x32;&#46;&#x31;&#54;&#56;&#x2e;&#x31;&#x2e;&#x31;&#54;&#x38;">&#101;&#x62;&#49;&#50;&#x33;&#52;&#53;&#54;&#64;&#x31;&#57;&#x32;&#46;&#x31;&#54;&#56;&#x2e;&#x31;&#x2e;&#x31;&#54;&#x38;</a>:554/h264/ch1/main/av_stream</p>
 <p>rtsp视频流解析测试：</p>
 <ol>
 <li><p>VLC：用VLC播放rtsp地址，测试是否能正常播放。</p>
@@ -313,7 +313,7 @@
 <li><p>设备终端：将下面的命令其中的”rtsp://……”更换成当时的rtsp地址，然后在盒子里任意目录下执行，等待数秒后，会在当前目录下生成若干张jpg图片文件，如果没有生成jpg文件，说明gstreamer解析视频流失败，请再次检查网络、rtsp地址格式是否错误、缺少必要信息等。</p>
 </li>
 </ol>
-<p>gst-launch-1.0 rtspsrc location=”rtsp://admin:<a href="mailto:&#115;&#122;&#x64;&#121;&#99;&#115;&#x31;&#50;&#51;&#52;&#x35;&#54;&#x40;&#x31;&#x37;&#x32;&#x2e;&#49;&#54;&#x2e;&#49;&#x32;&#x2e;&#49;&#x36;&#x39;">&#115;&#122;&#x64;&#121;&#99;&#115;&#x31;&#50;&#51;&#52;&#x35;&#54;&#x40;&#x31;&#x37;&#x32;&#x2e;&#49;&#54;&#x2e;&#49;&#x32;&#x2e;&#49;&#x36;&#x39;</a>:554/h264/ch1/main/av_stream” latency=0 ! rtph264depay ! h264parse ! omxh264dec ! videorate ! video/x-raw,framerate=2/1 ! videoconvert ! jpegenc !  multifilesink location=”frame%d.jpg”<br>gst-launch-1.0 rtspsrc location=”rtsp://admin:<a href="mailto:&#x61;&#x64;&#x6d;&#x69;&#x6e;&#64;&#x31;&#55;&#x32;&#x2e;&#49;&#x36;&#x2e;&#49;&#x32;&#x2e;&#49;&#57;&#57;">&#x61;&#x64;&#x6d;&#x69;&#x6e;&#64;&#x31;&#55;&#x32;&#x2e;&#49;&#x36;&#x2e;&#49;&#x32;&#x2e;&#49;&#57;&#57;</a>/stream_main” latency=0 ! rtph264depay ! h264parse ! omxh264dec ! videorate ! video/x-raw,framerate=2/1 ! videoconvert ! jpegenc !  multifilesink location=”frame%d.jpg” </p>
+<p>gst-launch-1.0 rtspsrc location=”rtsp://admin:<a href="mailto:&#115;&#x7a;&#100;&#121;&#x63;&#x73;&#x31;&#x32;&#51;&#x34;&#x35;&#54;&#64;&#x31;&#x37;&#x32;&#x2e;&#x31;&#54;&#x2e;&#x31;&#x32;&#x2e;&#49;&#54;&#x39;">&#115;&#x7a;&#100;&#121;&#x63;&#x73;&#x31;&#x32;&#51;&#x34;&#x35;&#54;&#64;&#x31;&#x37;&#x32;&#x2e;&#x31;&#54;&#x2e;&#x31;&#x32;&#x2e;&#49;&#54;&#x39;</a>:554/h264/ch1/main/av_stream” latency=0 ! rtph264depay ! h264parse ! omxh264dec ! videorate ! video/x-raw,framerate=2/1 ! videoconvert ! jpegenc !  multifilesink location=”frame%d.jpg”<br>gst-launch-1.0 rtspsrc location=”rtsp://admin:<a href="mailto:&#97;&#100;&#109;&#x69;&#x6e;&#64;&#49;&#x37;&#x32;&#x2e;&#49;&#54;&#x2e;&#x31;&#x32;&#x2e;&#49;&#57;&#x39;">&#97;&#100;&#109;&#x69;&#x6e;&#64;&#49;&#x37;&#x32;&#x2e;&#49;&#54;&#x2e;&#x31;&#x32;&#x2e;&#49;&#57;&#x39;</a>/stream_main” latency=0 ! rtph264depay ! h264parse ! omxh264dec ! videorate ! video/x-raw,framerate=2/1 ! videoconvert ! jpegenc !  multifilesink location=”frame%d.jpg” </p>
 </li>
 </ul>
 
