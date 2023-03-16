@@ -1,139 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Mysql数据库的增删改查(进阶篇)</title>
-    <url>/2020/09/16/Mysql%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5(%E8%BF%9B%E9%98%B6%E7%AF%87)/</url>
-    <content><![CDATA[<h2 id="聚合函数"><a href="#聚合函数" class="headerlink" title="聚合函数"></a>聚合函数</h2><h3 id="1-聚合函数"><a href="#1-聚合函数" class="headerlink" title="1.聚合函数"></a>1.聚合函数</h3><table>
-<thead>
-<tr>
-<th>函数</th>
-<th align="right">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>COUNT([DISTINCT] expr)</td>
-<td align="right">返回查询到的数据的数量</td>
-</tr>
-<tr>
-<td>SUM([DISTINCT] expr)</td>
-<td align="right">返回查询到的数据的总和，不是数字没有意义</td>
-</tr>
-<tr>
-<td>AVG([DISTINCT] expr)</td>
-<td align="right">返回查询到的数据的平均值，不是数字没有意义</td>
-</tr>
-<tr>
-<td>MAX([DISTINCT] expr)</td>
-<td align="right">返回查询到的数据的最大值，不是数字没有意义</td>
-</tr>
-<tr>
-<td>MIN([DISTINCT] expr)</td>
-<td align="right">返回查询到的数据的数量，不是数字没有意义</td>
-</tr>
-</tbody></table>
-<p>例：<br>COUNT:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 统计班级共有多少同学 </span><br><span class="line"></span><br><span class="line">SELECT COUNT(*) FROM student; </span><br><span class="line">SELECT COUNT(0) FROM student;</span><br><span class="line"></span><br><span class="line">-- 统计班级收集的 qq_mail 有多少个，qq_mail 为 NULL 的数据不会计入结果 </span><br><span class="line">SELECT COUNT(qq_mail) FROM student;</span><br></pre></td></tr></table></figure>
-
-<p>例：<br>SUM：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 统计数学成绩总分 SELECT SUM(math) FROM exam_result;</span><br><span class="line">-- 不及格 &lt; 60 的总分，没有结果，返回 NULL </span><br><span class="line"></span><br><span class="line">SELECT SUM(math) FROM exam_result WHERE math &lt; 60; </span><br></pre></td></tr></table></figure>
-
-<p>例：<br>AVG：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 统计平均总分 </span><br><span class="line"></span><br><span class="line">SELECT AVG(chinese + math + english) 平均总分 FROM exam_result;</span><br></pre></td></tr></table></figure>
-
-<p>例：<br>MAX：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 返回英语最高分 </span><br><span class="line"></span><br><span class="line">SELECT MAX(english) FROM exam_result;</span><br></pre></td></tr></table></figure>
-
-<p>例：<br>MIN：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 返回 &gt; 70 分以上的数学最低分 </span><br><span class="line"></span><br><span class="line">SELECT MIN(math) FROM exam_result WHERE math &gt; 70;</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="2-GROUP-BY子句"><a href="#2-GROUP-BY子句" class="headerlink" title="2.GROUP BY子句"></a>2.GROUP BY子句</h3><p>SELECT 中使用 GROUP BY 子句可以对指定列进行分组查询。需要满足：使用 GROUP BY 进行分组查 询时，SELECT 指定的字段必须是“分组依据字段”，其他字段若想出现在SELECT 中则必须包含在聚合函 数中。</p>
-<p>select column1, sum(column2), … from table group by column1;</p>
-<p>例:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--查询每个角色的最高工资、最低工资和平均工资</span><br><span class="line"></span><br><span class="line">select role,max(salary),min(salary),avg(salary) from emp group by role;</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="3-HAVING"><a href="#3-HAVING" class="headerlink" title="3.HAVING"></a>3.HAVING</h3><p>GROUP BY 子句进行分组以后，需要对分组结果再进行条件过滤时，不能使用 WHERE 语句，而需要用 HAVING</p>
-<p>例:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select role,max(salary),min(salary),avg(salary) from emp group by role having avg(salary)&lt;1500; </span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="联合查询"><a href="#联合查询" class="headerlink" title="联合查询"></a>联合查询</h2><h3 id="1-内连接"><a href="#1-内连接" class="headerlink" title="1.内连接"></a>1.内连接</h3><p>select 字段 from 表1 别名1 [inner] join 表2 别名2 on 连接条件 and 其他条件;<br>–或者<br>select 字段 from 表1 别名1,表2 别名2 where 连接条件 and 其他条件;</p>
-<p>例:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--查询许仙同学的成绩</span><br><span class="line"></span><br><span class="line">select sco.score from student stu inner join score sco on stu.id=sco.student_id and stu.name=&#x27;许仙&#x27;; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-- 或者 </span><br><span class="line"></span><br><span class="line">select sco.score from student stu, score sco where stu.id=sco.student_id and stu.name=&#x27;许仙&#x27;;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--查询所有同学的总成绩，及同学的个人信息;</span><br><span class="line">-- 成绩表对学生表是多对1关系，查询总成绩是根据成绩表的同学id来进行分组的 </span><br><span class="line"></span><br><span class="line">SELECT    </span><br><span class="line">stu.sn,    </span><br><span class="line">stu.NAME,    </span><br><span class="line">stu.qq_mail,    </span><br><span class="line">sum( sco.score ) </span><br><span class="line">FROM    </span><br><span class="line">student stu   </span><br><span class="line">JOIN score sco ON stu.id = sco.student_id</span><br><span class="line">GROUP BY    </span><br><span class="line">sco.student_id;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--查询所有同学的成绩，及同学的个人信息：</span><br><span class="line">--学生表、成绩表、课程表3张表关联查询 </span><br><span class="line"></span><br><span class="line">SELECT    </span><br><span class="line">stu.id,    </span><br><span class="line">stu.sn,    </span><br><span class="line">stu.NAME,    </span><br><span class="line">stu.qq_mail,    </span><br><span class="line">sco.score,    </span><br><span class="line">sco.course_id,    </span><br><span class="line">cou.NAME FROM    </span><br><span class="line">student stu    </span><br><span class="line">JOIN score sco ON stu.id = sco.student_id    </span><br><span class="line">JOIN course cou ON sco.course_id = cou.id </span><br><span class="line">ORDER BY</span><br><span class="line">stu.id;</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-外连接"><a href="#2-外连接" class="headerlink" title="2.外连接"></a>2.外连接</h3><p>外连接分为左外连接和右外连接。如果联合查询，左侧的表完全显示我们就说是左外连接；右侧的表完 全显示我们就说是右外连接</p>
-<p>– 左外连接，表1完全显示 select 字段名 from 表名1 left join 表名2 on 连接条件;<br>– 右外连接，表2完全显示 select 字段 from 表名1 right join 表名2 on 连接条件;</p>
-<p>例:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--查询所有同学的成绩，及同学的个人信息，如果该同学没有成绩，也需要显示</span><br><span class="line">-- “老外学中文”同学 没有考试成绩，也显示出来了 </span><br><span class="line"></span><br><span class="line">select * from student stu left join score sco on stu.id=sco.student_id; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-- 对应的右外连接为： </span><br><span class="line"></span><br><span class="line">select * from  score sco right join student stu on stu.id=sco.student_id;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-- 学生表、成绩表、课程表3张表关联查询</span><br><span class="line"> </span><br><span class="line">SELECT    </span><br><span class="line">stu.id,    </span><br><span class="line">stu.sn,    </span><br><span class="line">stu.NAME,    </span><br><span class="line">stu.qq_mail,    </span><br><span class="line">sco.score,    </span><br><span class="line">sco.course_id,    </span><br><span class="line">cou.NAME FROM    </span><br><span class="line">student stu    </span><br><span class="line">LEFT JOIN score sco ON stu.id = sco.student_id    LEFT JOIN course cou ON sco.course_id = cou.id </span><br><span class="line">ORDER BY    </span><br><span class="line">stu.id; </span><br></pre></td></tr></table></figure>
-
-
-<h3 id="3-自连接"><a href="#3-自连接" class="headerlink" title="3.自连接"></a>3.自连接</h3><p>自连接是指在同一张表连接自身进行查询。</p>
-<p>例:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 先查询“计算机原理”和“Java”课程的id </span><br><span class="line"></span><br><span class="line">select id,name from course where name=&#x27;Java&#x27; or name=&#x27;计算机原理&#x27;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-- 再查询成绩表中，“计算机原理”成绩比“Java”成绩 好的信息 </span><br><span class="line"></span><br><span class="line">SELECT    </span><br><span class="line">s1.* </span><br><span class="line">FROM    </span><br><span class="line">score s1,    </span><br><span class="line">score s2 </span><br><span class="line">WHERE    </span><br><span class="line">s1.student_id = s2.student_id </span><br><span class="line"> AND s1.score &lt; s2.score     </span><br><span class="line"> AND s1.course_id = 1     </span><br><span class="line"> AND s2.course_id = 3;</span><br></pre></td></tr></table></figure>
-
-<h3 id="4-自连接"><a href="#4-自连接" class="headerlink" title="4.自连接"></a>4.自连接</h3><p>子查询是指嵌入在其他sql语句中的select语句，也叫嵌套查询</p>
-<ul>
-<li><p>单行子查询:<br>例:<br>返回一行记录的子查询 查询与“不想毕业” 同学的同班同学;</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from student where classes_id=(select classes_id from student where name=&#x27;不想毕业&#x27;);</span><br></pre></td></tr></table></figure></li>
-<li><p>多行子查询：<br>例:<br>返回多行记录的子查询 查询“语文”或“英文”课程的成绩信息</p>
-</li>
-</ul>
-<p>IN关键字 同理也有NOT IN 用法相同</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from score where course_id in (select id from course where name=&#x27;语文&#x27; or name=&#x27;英文&#x27;);</span><br></pre></td></tr></table></figure>
-<p>EXISTS关键字 同理也有NOT EXISTS 用法相同</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from score sco where exists (select sco.id from course cou where (name=&#x27;语文&#x27; or name=&#x27;英文&#x27;) and cou.id = sco.course_id);</span><br></pre></td></tr></table></figure>
-
-<h3 id="5-合并查询"><a href="#5-合并查询" class="headerlink" title="5.合并查询"></a>5.合并查询</h3><p>在实际应用中，为了合并多个select的执行结果，可以使用集合操作符 union，union all。使用UNION 和UNION ALL时，前后查询的结果集中，字段需要一致。</p>
-<ul>
-<li>union<br>该操作符用于取得两个结果集的并集。当使用该操作符时，会自动去掉结果集中的重复行。<br>例:<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from course where id&lt;3 </span><br><span class="line">union </span><br><span class="line">select * from course where name=&#x27;英文&#x27;;</span><br><span class="line">-- 相当于 </span><br><span class="line">select * from course where id&lt;3 or name=&#x27;英文&#x27;;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<ul>
-<li>union all</li>
-</ul>
-<p>该操作符用于取得两个结果集的并集。当使用该操作符时，不会去掉结果集中的重复行。</p>
-]]></content>
-      <categories>
-        <category>Mysql常用命令</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>netstat命令格式</title>
-    <url>/2020/08/19/windows%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/windowsnetstat%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[<h3 id="windows-netstat命令格式"><a href="#windows-netstat命令格式" class="headerlink" title="windows netstat命令格式"></a>windows netstat命令格式</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat [选项]</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">命令中各选项的含义如下：</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-a 显示所有socket，包括正在监听的。</span><br><span class="line"></span><br><span class="line">-c 每隔1秒就重新显示一遍，直到用户中断它。</span><br><span class="line"></span><br><span class="line">-i 显示所有网络接口的信息，格式同“ifconfig -e”。</span><br><span class="line"></span><br><span class="line">-n 以网络IP地址代替名称，显示出网络连接情形。</span><br><span class="line"></span><br><span class="line">-r 显示核心路由表，格式同“route -e”。</span><br><span class="line"></span><br><span class="line">-t 显示TCP协议的连接情况。</span><br><span class="line"></span><br><span class="line">-u 显示UDP协议的连接情况。</span><br><span class="line"></span><br><span class="line">-v 显示正在进行的工作。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-A 显示任何关联的协议控制块的地址。主要用于调试</span><br><span class="line"></span><br><span class="line">-a 显示所有套接字的状态。在一般情况下不显示与服务器进程相关联的套接字</span><br><span class="line"></span><br><span class="line">-i 显示自动配置接口的状态。那些在系统初始引导后配置的接口状态不在输出之列</span><br><span class="line"></span><br><span class="line">-m 打印网络存储器的使用情况</span><br><span class="line"></span><br><span class="line">-n 打印实际地址，而不是对地址的解释或者显示主机，网络名之类的符号</span><br><span class="line"></span><br><span class="line">-r 打印路由选择表</span><br><span class="line"></span><br><span class="line">-f address -family对于给出名字的地址簇打印统计数字和控制块信息。到目前为止，唯一支持的地址簇是inet</span><br><span class="line"></span><br><span class="line">-I interface 只打印给出名字的接口状态</span><br><span class="line"></span><br><span class="line">-p protocol-name 只打印给出名字的协议的统计数字和协议控制块信息</span><br><span class="line"></span><br><span class="line">-s 打印每个协议的统计数字</span><br><span class="line"></span><br><span class="line">-t 在输出显示中用时间信息代替队列长度信息。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">netstat命令的列标题</span><br><span class="line"></span><br><span class="line">Name 接口的名字</span><br><span class="line"></span><br><span class="line">Mtu 接口的最大传输单位</span><br><span class="line"></span><br><span class="line">Net/Dest 接口所在的网络</span><br><span class="line"></span><br><span class="line">Address 接口的IP地址</span><br><span class="line"></span><br><span class="line">Ipkts 接收到的数据包数目</span><br><span class="line"></span><br><span class="line">Ierrs 接收到时已损坏的数据包数目</span><br><span class="line"></span><br><span class="line">Opkts 发送的数据包数目</span><br><span class="line"></span><br><span class="line">Oeers 发送时已损坏的数据包数目</span><br><span class="line"></span><br><span class="line">Collisions 由这个接口所记录的网络冲突数目</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">netstat的一些常用选项：</span><br><span class="line"></span><br><span class="line">netstat -s--本选项能够按照各个协议分别显示其统计数据。如果你的应用程序（如Web浏览器）运行速度比较慢，或者不能显示Web页之类的数据，那么你就可以用本选项来查看一下所显示的信息。你需要仔细查看统计数据的各行，找到出错的关键字，进而确定问题所在。</span><br><span class="line"></span><br><span class="line">netstat -e--本选项用于显示关于以太网的统计数据。它列出的项目包括传送的数据报的总字节数、错误数、删除数、数据报的数量和广播的数量。这些统计数据既有发送的数据报数量，也有接收的数据报数量。这个选项可以用来统计一些基本的网络流量）。</span><br><span class="line"></span><br><span class="line">netstat -r--本选项可以显示关于路由表的信息，类似于后面所讲使用route print命令时看到的 信息。除了显示有效路由外，还显示当前有效的连接。</span><br><span class="line"></span><br><span class="line">netstat -a--本选项显示一个所有的有效连接信息列表，包括已建立的连接（ESTABLISHED），也包括监听连接请求（LISTENING）的那些连接。</span><br><span class="line"></span><br><span class="line">bnetstat -n--显示所有已建立的有效连接。</span><br><span class="line"></span><br><span class="line">« AWKPHP经典 »netstat -an中state含义</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">netstat -an中state含义</span><br><span class="line"></span><br><span class="line">LISTEN：侦听来自远方的TCP端口的连接请求</span><br><span class="line"></span><br><span class="line">SYN-SENT：再发送连接请求后等待匹配的连接请求</span><br><span class="line"></span><br><span class="line">SYN-RECEIVED：再收到和发送一个连接请求后等待对方对连接请求的确认</span><br><span class="line"></span><br><span class="line">ESTABLISHED：代表一个打开的连接</span><br><span class="line"></span><br><span class="line">FIN-WAIT-1：等待远程TCP连接中断请求，或先前的连接中断请求的确认</span><br><span class="line"></span><br><span class="line">FIN-WAIT-2：从远程TCP等待连接中断请求</span><br><span class="line"></span><br><span class="line">CLOSE-WAIT：等待从本地用户发来的连接中断请求</span><br><span class="line"></span><br><span class="line">CLOSING：等待远程TCP对连接中断的确认</span><br><span class="line"></span><br><span class="line">LAST-ACK：等待原来的发向远程TCP的连接中断请求的确认</span><br><span class="line"></span><br><span class="line">TIME-WAIT：等待足够的时间以确保远程TCP接收到连接中断请求的确认</span><br><span class="line"></span><br><span class="line">CLOSED：没有任何连接状态</span><br></pre></td></tr></table></figure>
-
-<h3 id="windows-netstat命令详解"><a href="#windows-netstat命令详解" class="headerlink" title="windows netstat命令详解"></a>windows netstat命令详解</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">开始--运行--cmd 进入命令提示符 输入netstat -ano 即可看到所有连接的PID 之后在任务管理器中找到这个PID所对应的程序如果任务管理器中没有PID这一项,可以在任务管理器中选&quot;查看&quot;-&quot;选择列&quot;</span><br><span class="line"></span><br><span class="line">经常，我们在启动应用的时候发现系统需要的端口被别的程序占用，如何知道谁占有了我们需要的端口，很多人都比较头疼，下面就介绍一种非常简单的方法，希望对大家有用</span><br><span class="line"></span><br><span class="line">假如我们需要确定谁占用了我们的9050端口</span><br><span class="line"></span><br><span class="line">1、Windows平台</span><br><span class="line">在windows命令行窗口下执行：</span><br><span class="line">1.查看所有的端口占用情况</span><br><span class="line"></span><br><span class="line">C:\&gt;netstat -ano</span><br><span class="line"></span><br><span class="line">  协议    本地地址                     外部地址               状态                   PID</span><br><span class="line"></span><br><span class="line">  TCP    127.0.0.1:1434         0.0.0.0:0              LISTENING       3236</span><br><span class="line">  TCP    127.0.0.1:5679         0.0.0.0:0              LISTENING       4168</span><br><span class="line">  TCP    127.0.0.1:7438         0.0.0.0:0              LISTENING       4168</span><br><span class="line">  TCP    127.0.0.1:8015         0.0.0.0:0              LISTENING       1456</span><br><span class="line">  TCP    192.168.3.230:139      0.0.0.0:0              LISTENING       4</span><br><span class="line">  TCP    192.168.3.230:1957     220.181.31.225:443     ESTABLISHED     3068</span><br><span class="line">  TCP    192.168.3.230:2020     183.62.96.189:1522     ESTABLISHED     1456</span><br><span class="line">  TCP    192.168.3.230:2927     117.79.91.18:80        ESTABLISHED     4732</span><br><span class="line">  TCP    192.168.3.230:2929     117.79.91.18:80        ESTABLISHED     4732</span><br><span class="line">  TCP    192.168.3.230:2930     117.79.91.18:80        ESTABLISHED     4732</span><br><span class="line">  TCP    192.168.3.230:2931     117.79.91.18:80        ESTABLISHED     4732</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">2.查看指定端口的占用情况</span><br><span class="line">C:\&gt;netstat -aon|findstr &quot;9050&quot;</span><br><span class="line"></span><br><span class="line">  协议    本地地址                     外部地址               状态                   PID</span><br><span class="line"></span><br><span class="line">  TCP    127.0.0.1:9050         0.0.0.0:0              LISTENING       2016</span><br><span class="line"></span><br><span class="line">P: 看到了吗，端口被进程号为2016的进程占用，继续执行下面命令： （也可以去任务管理器中查看pid对应的进程）</span><br><span class="line"></span><br><span class="line">3.查看PID对应的进程</span><br><span class="line">C:\&gt;tasklist|findstr &quot;2016&quot;</span><br><span class="line"></span><br><span class="line"> 映像名称                       PID 会话名              会话#       内存使用</span><br><span class="line"> ========================= ======== ================</span><br><span class="line">  tor.exe                     2016 Console                 0     16,064 K</span><br><span class="line"></span><br><span class="line">P:很清楚吧，tor占用了你的端口。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">4.结束该进程</span><br><span class="line"></span><br><span class="line">C:\&gt;taskkill /f /t /im tor.exe</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>windows常用命令</category>
-      </categories>
-      <tags>
-        <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Windows 设置IP的几种脚本方式</title>
-    <url>/2020/08/28/windows%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/windows%E5%9B%BA%E5%AE%9AIP%E6%96%B9%E5%BC%8F/</url>
-    <content><![CDATA[<h3 id="Windows-DHCP方式bat-脚本"><a href="#Windows-DHCP方式bat-脚本" class="headerlink" title="Windows DHCP方式bat 脚本"></a>Windows DHCP方式bat 脚本</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netsh interface ip set address name=&quot;以太网 2&quot; source=dhcp </span><br></pre></td></tr></table></figure>
-
-
-<h3 id="Windows-固定IP方式bat-脚本"><a href="#Windows-固定IP方式bat-脚本" class="headerlink" title="Windows 固定IP方式bat 脚本"></a>Windows 固定IP方式bat 脚本</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">set ipaddr=172.16.13.15</span><br><span class="line">set mask=255.255.255.0</span><br><span class="line">set gateway=172.16.13.1</span><br><span class="line">set dnsaddr=114.114.114.114</span><br><span class="line">netsh interface ip set address name=&quot;以太网 2&quot; source=static address=%ipaddr% mask=%mask% gateway=%gateway% 1</span><br><span class="line">netsh interface ip set dnsservers name=&quot;以太网 2&quot; source=static address=%dnsaddr%</span><br><span class="line">netsh interface ip add address &quot;以太网 2&quot; 192.168.1.180 255.255.255.0</span><br><span class="line">netsh interface ip add address &quot;以太网 2&quot; 192.168.10.180 255.255.255.0</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">pause</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>windows常用命令</category>
-      </categories>
-      <tags>
-        <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>【Linux】grep 匹配多个关键字</title>
     <url>/2020/08/20/Linxu%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/Linux-cat-grep%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[<p>grep 命令非常常用，经常用于匹配文本字符。</p>
@@ -267,6 +134,139 @@
       </categories>
       <tags>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Mysql数据库的增删改查(进阶篇)</title>
+    <url>/2020/09/16/Mysql%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5(%E8%BF%9B%E9%98%B6%E7%AF%87)/</url>
+    <content><![CDATA[<h2 id="聚合函数"><a href="#聚合函数" class="headerlink" title="聚合函数"></a>聚合函数</h2><h3 id="1-聚合函数"><a href="#1-聚合函数" class="headerlink" title="1.聚合函数"></a>1.聚合函数</h3><table>
+<thead>
+<tr>
+<th>函数</th>
+<th align="right">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>COUNT([DISTINCT] expr)</td>
+<td align="right">返回查询到的数据的数量</td>
+</tr>
+<tr>
+<td>SUM([DISTINCT] expr)</td>
+<td align="right">返回查询到的数据的总和，不是数字没有意义</td>
+</tr>
+<tr>
+<td>AVG([DISTINCT] expr)</td>
+<td align="right">返回查询到的数据的平均值，不是数字没有意义</td>
+</tr>
+<tr>
+<td>MAX([DISTINCT] expr)</td>
+<td align="right">返回查询到的数据的最大值，不是数字没有意义</td>
+</tr>
+<tr>
+<td>MIN([DISTINCT] expr)</td>
+<td align="right">返回查询到的数据的数量，不是数字没有意义</td>
+</tr>
+</tbody></table>
+<p>例：<br>COUNT:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 统计班级共有多少同学 </span><br><span class="line"></span><br><span class="line">SELECT COUNT(*) FROM student; </span><br><span class="line">SELECT COUNT(0) FROM student;</span><br><span class="line"></span><br><span class="line">-- 统计班级收集的 qq_mail 有多少个，qq_mail 为 NULL 的数据不会计入结果 </span><br><span class="line">SELECT COUNT(qq_mail) FROM student;</span><br></pre></td></tr></table></figure>
+
+<p>例：<br>SUM：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 统计数学成绩总分 SELECT SUM(math) FROM exam_result;</span><br><span class="line">-- 不及格 &lt; 60 的总分，没有结果，返回 NULL </span><br><span class="line"></span><br><span class="line">SELECT SUM(math) FROM exam_result WHERE math &lt; 60; </span><br></pre></td></tr></table></figure>
+
+<p>例：<br>AVG：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 统计平均总分 </span><br><span class="line"></span><br><span class="line">SELECT AVG(chinese + math + english) 平均总分 FROM exam_result;</span><br></pre></td></tr></table></figure>
+
+<p>例：<br>MAX：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 返回英语最高分 </span><br><span class="line"></span><br><span class="line">SELECT MAX(english) FROM exam_result;</span><br></pre></td></tr></table></figure>
+
+<p>例：<br>MIN：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 返回 &gt; 70 分以上的数学最低分 </span><br><span class="line"></span><br><span class="line">SELECT MIN(math) FROM exam_result WHERE math &gt; 70;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="2-GROUP-BY子句"><a href="#2-GROUP-BY子句" class="headerlink" title="2.GROUP BY子句"></a>2.GROUP BY子句</h3><p>SELECT 中使用 GROUP BY 子句可以对指定列进行分组查询。需要满足：使用 GROUP BY 进行分组查 询时，SELECT 指定的字段必须是“分组依据字段”，其他字段若想出现在SELECT 中则必须包含在聚合函 数中。</p>
+<p>select column1, sum(column2), … from table group by column1;</p>
+<p>例:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--查询每个角色的最高工资、最低工资和平均工资</span><br><span class="line"></span><br><span class="line">select role,max(salary),min(salary),avg(salary) from emp group by role;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="3-HAVING"><a href="#3-HAVING" class="headerlink" title="3.HAVING"></a>3.HAVING</h3><p>GROUP BY 子句进行分组以后，需要对分组结果再进行条件过滤时，不能使用 WHERE 语句，而需要用 HAVING</p>
+<p>例:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select role,max(salary),min(salary),avg(salary) from emp group by role having avg(salary)&lt;1500; </span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="联合查询"><a href="#联合查询" class="headerlink" title="联合查询"></a>联合查询</h2><h3 id="1-内连接"><a href="#1-内连接" class="headerlink" title="1.内连接"></a>1.内连接</h3><p>select 字段 from 表1 别名1 [inner] join 表2 别名2 on 连接条件 and 其他条件;<br>–或者<br>select 字段 from 表1 别名1,表2 别名2 where 连接条件 and 其他条件;</p>
+<p>例:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--查询许仙同学的成绩</span><br><span class="line"></span><br><span class="line">select sco.score from student stu inner join score sco on stu.id=sco.student_id and stu.name=&#x27;许仙&#x27;; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-- 或者 </span><br><span class="line"></span><br><span class="line">select sco.score from student stu, score sco where stu.id=sco.student_id and stu.name=&#x27;许仙&#x27;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--查询所有同学的总成绩，及同学的个人信息;</span><br><span class="line">-- 成绩表对学生表是多对1关系，查询总成绩是根据成绩表的同学id来进行分组的 </span><br><span class="line"></span><br><span class="line">SELECT    </span><br><span class="line">stu.sn,    </span><br><span class="line">stu.NAME,    </span><br><span class="line">stu.qq_mail,    </span><br><span class="line">sum( sco.score ) </span><br><span class="line">FROM    </span><br><span class="line">student stu   </span><br><span class="line">JOIN score sco ON stu.id = sco.student_id</span><br><span class="line">GROUP BY    </span><br><span class="line">sco.student_id;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--查询所有同学的成绩，及同学的个人信息：</span><br><span class="line">--学生表、成绩表、课程表3张表关联查询 </span><br><span class="line"></span><br><span class="line">SELECT    </span><br><span class="line">stu.id,    </span><br><span class="line">stu.sn,    </span><br><span class="line">stu.NAME,    </span><br><span class="line">stu.qq_mail,    </span><br><span class="line">sco.score,    </span><br><span class="line">sco.course_id,    </span><br><span class="line">cou.NAME FROM    </span><br><span class="line">student stu    </span><br><span class="line">JOIN score sco ON stu.id = sco.student_id    </span><br><span class="line">JOIN course cou ON sco.course_id = cou.id </span><br><span class="line">ORDER BY</span><br><span class="line">stu.id;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-外连接"><a href="#2-外连接" class="headerlink" title="2.外连接"></a>2.外连接</h3><p>外连接分为左外连接和右外连接。如果联合查询，左侧的表完全显示我们就说是左外连接；右侧的表完 全显示我们就说是右外连接</p>
+<p>– 左外连接，表1完全显示 select 字段名 from 表名1 left join 表名2 on 连接条件;<br>– 右外连接，表2完全显示 select 字段 from 表名1 right join 表名2 on 连接条件;</p>
+<p>例:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--查询所有同学的成绩，及同学的个人信息，如果该同学没有成绩，也需要显示</span><br><span class="line">-- “老外学中文”同学 没有考试成绩，也显示出来了 </span><br><span class="line"></span><br><span class="line">select * from student stu left join score sco on stu.id=sco.student_id; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-- 对应的右外连接为： </span><br><span class="line"></span><br><span class="line">select * from  score sco right join student stu on stu.id=sco.student_id;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-- 学生表、成绩表、课程表3张表关联查询</span><br><span class="line"> </span><br><span class="line">SELECT    </span><br><span class="line">stu.id,    </span><br><span class="line">stu.sn,    </span><br><span class="line">stu.NAME,    </span><br><span class="line">stu.qq_mail,    </span><br><span class="line">sco.score,    </span><br><span class="line">sco.course_id,    </span><br><span class="line">cou.NAME FROM    </span><br><span class="line">student stu    </span><br><span class="line">LEFT JOIN score sco ON stu.id = sco.student_id    LEFT JOIN course cou ON sco.course_id = cou.id </span><br><span class="line">ORDER BY    </span><br><span class="line">stu.id; </span><br></pre></td></tr></table></figure>
+
+
+<h3 id="3-自连接"><a href="#3-自连接" class="headerlink" title="3.自连接"></a>3.自连接</h3><p>自连接是指在同一张表连接自身进行查询。</p>
+<p>例:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 先查询“计算机原理”和“Java”课程的id </span><br><span class="line"></span><br><span class="line">select id,name from course where name=&#x27;Java&#x27; or name=&#x27;计算机原理&#x27;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-- 再查询成绩表中，“计算机原理”成绩比“Java”成绩 好的信息 </span><br><span class="line"></span><br><span class="line">SELECT    </span><br><span class="line">s1.* </span><br><span class="line">FROM    </span><br><span class="line">score s1,    </span><br><span class="line">score s2 </span><br><span class="line">WHERE    </span><br><span class="line">s1.student_id = s2.student_id </span><br><span class="line"> AND s1.score &lt; s2.score     </span><br><span class="line"> AND s1.course_id = 1     </span><br><span class="line"> AND s2.course_id = 3;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-自连接"><a href="#4-自连接" class="headerlink" title="4.自连接"></a>4.自连接</h3><p>子查询是指嵌入在其他sql语句中的select语句，也叫嵌套查询</p>
+<ul>
+<li><p>单行子查询:<br>例:<br>返回一行记录的子查询 查询与“不想毕业” 同学的同班同学;</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from student where classes_id=(select classes_id from student where name=&#x27;不想毕业&#x27;);</span><br></pre></td></tr></table></figure></li>
+<li><p>多行子查询：<br>例:<br>返回多行记录的子查询 查询“语文”或“英文”课程的成绩信息</p>
+</li>
+</ul>
+<p>IN关键字 同理也有NOT IN 用法相同</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from score where course_id in (select id from course where name=&#x27;语文&#x27; or name=&#x27;英文&#x27;);</span><br></pre></td></tr></table></figure>
+<p>EXISTS关键字 同理也有NOT EXISTS 用法相同</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from score sco where exists (select sco.id from course cou where (name=&#x27;语文&#x27; or name=&#x27;英文&#x27;) and cou.id = sco.course_id);</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-合并查询"><a href="#5-合并查询" class="headerlink" title="5.合并查询"></a>5.合并查询</h3><p>在实际应用中，为了合并多个select的执行结果，可以使用集合操作符 union，union all。使用UNION 和UNION ALL时，前后查询的结果集中，字段需要一致。</p>
+<ul>
+<li>union<br>该操作符用于取得两个结果集的并集。当使用该操作符时，会自动去掉结果集中的重复行。<br>例:<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from course where id&lt;3 </span><br><span class="line">union </span><br><span class="line">select * from course where name=&#x27;英文&#x27;;</span><br><span class="line">-- 相当于 </span><br><span class="line">select * from course where id&lt;3 or name=&#x27;英文&#x27;;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<ul>
+<li>union all</li>
+</ul>
+<p>该操作符用于取得两个结果集的并集。当使用该操作符时，不会去掉结果集中的重复行。</p>
+]]></content>
+      <categories>
+        <category>Mysql常用命令</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>netstat命令格式</title>
+    <url>/2020/08/19/windows%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/windowsnetstat%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<h3 id="windows-netstat命令格式"><a href="#windows-netstat命令格式" class="headerlink" title="windows netstat命令格式"></a>windows netstat命令格式</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat [选项]</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">命令中各选项的含义如下：</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-a 显示所有socket，包括正在监听的。</span><br><span class="line"></span><br><span class="line">-c 每隔1秒就重新显示一遍，直到用户中断它。</span><br><span class="line"></span><br><span class="line">-i 显示所有网络接口的信息，格式同“ifconfig -e”。</span><br><span class="line"></span><br><span class="line">-n 以网络IP地址代替名称，显示出网络连接情形。</span><br><span class="line"></span><br><span class="line">-r 显示核心路由表，格式同“route -e”。</span><br><span class="line"></span><br><span class="line">-t 显示TCP协议的连接情况。</span><br><span class="line"></span><br><span class="line">-u 显示UDP协议的连接情况。</span><br><span class="line"></span><br><span class="line">-v 显示正在进行的工作。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-A 显示任何关联的协议控制块的地址。主要用于调试</span><br><span class="line"></span><br><span class="line">-a 显示所有套接字的状态。在一般情况下不显示与服务器进程相关联的套接字</span><br><span class="line"></span><br><span class="line">-i 显示自动配置接口的状态。那些在系统初始引导后配置的接口状态不在输出之列</span><br><span class="line"></span><br><span class="line">-m 打印网络存储器的使用情况</span><br><span class="line"></span><br><span class="line">-n 打印实际地址，而不是对地址的解释或者显示主机，网络名之类的符号</span><br><span class="line"></span><br><span class="line">-r 打印路由选择表</span><br><span class="line"></span><br><span class="line">-f address -family对于给出名字的地址簇打印统计数字和控制块信息。到目前为止，唯一支持的地址簇是inet</span><br><span class="line"></span><br><span class="line">-I interface 只打印给出名字的接口状态</span><br><span class="line"></span><br><span class="line">-p protocol-name 只打印给出名字的协议的统计数字和协议控制块信息</span><br><span class="line"></span><br><span class="line">-s 打印每个协议的统计数字</span><br><span class="line"></span><br><span class="line">-t 在输出显示中用时间信息代替队列长度信息。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">netstat命令的列标题</span><br><span class="line"></span><br><span class="line">Name 接口的名字</span><br><span class="line"></span><br><span class="line">Mtu 接口的最大传输单位</span><br><span class="line"></span><br><span class="line">Net/Dest 接口所在的网络</span><br><span class="line"></span><br><span class="line">Address 接口的IP地址</span><br><span class="line"></span><br><span class="line">Ipkts 接收到的数据包数目</span><br><span class="line"></span><br><span class="line">Ierrs 接收到时已损坏的数据包数目</span><br><span class="line"></span><br><span class="line">Opkts 发送的数据包数目</span><br><span class="line"></span><br><span class="line">Oeers 发送时已损坏的数据包数目</span><br><span class="line"></span><br><span class="line">Collisions 由这个接口所记录的网络冲突数目</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">netstat的一些常用选项：</span><br><span class="line"></span><br><span class="line">netstat -s--本选项能够按照各个协议分别显示其统计数据。如果你的应用程序（如Web浏览器）运行速度比较慢，或者不能显示Web页之类的数据，那么你就可以用本选项来查看一下所显示的信息。你需要仔细查看统计数据的各行，找到出错的关键字，进而确定问题所在。</span><br><span class="line"></span><br><span class="line">netstat -e--本选项用于显示关于以太网的统计数据。它列出的项目包括传送的数据报的总字节数、错误数、删除数、数据报的数量和广播的数量。这些统计数据既有发送的数据报数量，也有接收的数据报数量。这个选项可以用来统计一些基本的网络流量）。</span><br><span class="line"></span><br><span class="line">netstat -r--本选项可以显示关于路由表的信息，类似于后面所讲使用route print命令时看到的 信息。除了显示有效路由外，还显示当前有效的连接。</span><br><span class="line"></span><br><span class="line">netstat -a--本选项显示一个所有的有效连接信息列表，包括已建立的连接（ESTABLISHED），也包括监听连接请求（LISTENING）的那些连接。</span><br><span class="line"></span><br><span class="line">bnetstat -n--显示所有已建立的有效连接。</span><br><span class="line"></span><br><span class="line">« AWKPHP经典 »netstat -an中state含义</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">netstat -an中state含义</span><br><span class="line"></span><br><span class="line">LISTEN：侦听来自远方的TCP端口的连接请求</span><br><span class="line"></span><br><span class="line">SYN-SENT：再发送连接请求后等待匹配的连接请求</span><br><span class="line"></span><br><span class="line">SYN-RECEIVED：再收到和发送一个连接请求后等待对方对连接请求的确认</span><br><span class="line"></span><br><span class="line">ESTABLISHED：代表一个打开的连接</span><br><span class="line"></span><br><span class="line">FIN-WAIT-1：等待远程TCP连接中断请求，或先前的连接中断请求的确认</span><br><span class="line"></span><br><span class="line">FIN-WAIT-2：从远程TCP等待连接中断请求</span><br><span class="line"></span><br><span class="line">CLOSE-WAIT：等待从本地用户发来的连接中断请求</span><br><span class="line"></span><br><span class="line">CLOSING：等待远程TCP对连接中断的确认</span><br><span class="line"></span><br><span class="line">LAST-ACK：等待原来的发向远程TCP的连接中断请求的确认</span><br><span class="line"></span><br><span class="line">TIME-WAIT：等待足够的时间以确保远程TCP接收到连接中断请求的确认</span><br><span class="line"></span><br><span class="line">CLOSED：没有任何连接状态</span><br></pre></td></tr></table></figure>
+
+<h3 id="windows-netstat命令详解"><a href="#windows-netstat命令详解" class="headerlink" title="windows netstat命令详解"></a>windows netstat命令详解</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">开始--运行--cmd 进入命令提示符 输入netstat -ano 即可看到所有连接的PID 之后在任务管理器中找到这个PID所对应的程序如果任务管理器中没有PID这一项,可以在任务管理器中选&quot;查看&quot;-&quot;选择列&quot;</span><br><span class="line"></span><br><span class="line">经常，我们在启动应用的时候发现系统需要的端口被别的程序占用，如何知道谁占有了我们需要的端口，很多人都比较头疼，下面就介绍一种非常简单的方法，希望对大家有用</span><br><span class="line"></span><br><span class="line">假如我们需要确定谁占用了我们的9050端口</span><br><span class="line"></span><br><span class="line">1、Windows平台</span><br><span class="line">在windows命令行窗口下执行：</span><br><span class="line">1.查看所有的端口占用情况</span><br><span class="line"></span><br><span class="line">C:\&gt;netstat -ano</span><br><span class="line"></span><br><span class="line">  协议    本地地址                     外部地址               状态                   PID</span><br><span class="line"></span><br><span class="line">  TCP    127.0.0.1:1434         0.0.0.0:0              LISTENING       3236</span><br><span class="line">  TCP    127.0.0.1:5679         0.0.0.0:0              LISTENING       4168</span><br><span class="line">  TCP    127.0.0.1:7438         0.0.0.0:0              LISTENING       4168</span><br><span class="line">  TCP    127.0.0.1:8015         0.0.0.0:0              LISTENING       1456</span><br><span class="line">  TCP    192.168.3.230:139      0.0.0.0:0              LISTENING       4</span><br><span class="line">  TCP    192.168.3.230:1957     220.181.31.225:443     ESTABLISHED     3068</span><br><span class="line">  TCP    192.168.3.230:2020     183.62.96.189:1522     ESTABLISHED     1456</span><br><span class="line">  TCP    192.168.3.230:2927     117.79.91.18:80        ESTABLISHED     4732</span><br><span class="line">  TCP    192.168.3.230:2929     117.79.91.18:80        ESTABLISHED     4732</span><br><span class="line">  TCP    192.168.3.230:2930     117.79.91.18:80        ESTABLISHED     4732</span><br><span class="line">  TCP    192.168.3.230:2931     117.79.91.18:80        ESTABLISHED     4732</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">2.查看指定端口的占用情况</span><br><span class="line">C:\&gt;netstat -aon|findstr &quot;9050&quot;</span><br><span class="line"></span><br><span class="line">  协议    本地地址                     外部地址               状态                   PID</span><br><span class="line"></span><br><span class="line">  TCP    127.0.0.1:9050         0.0.0.0:0              LISTENING       2016</span><br><span class="line"></span><br><span class="line">P: 看到了吗，端口被进程号为2016的进程占用，继续执行下面命令： （也可以去任务管理器中查看pid对应的进程）</span><br><span class="line"></span><br><span class="line">3.查看PID对应的进程</span><br><span class="line">C:\&gt;tasklist|findstr &quot;2016&quot;</span><br><span class="line"></span><br><span class="line"> 映像名称                       PID 会话名              会话#       内存使用</span><br><span class="line"> ========================= ======== ================</span><br><span class="line">  tor.exe                     2016 Console                 0     16,064 K</span><br><span class="line"></span><br><span class="line">P:很清楚吧，tor占用了你的端口。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">4.结束该进程</span><br><span class="line"></span><br><span class="line">C:\&gt;taskkill /f /t /im tor.exe</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>windows常用命令</category>
+      </categories>
+      <tags>
+        <tag>Windows</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Windows 设置IP的几种脚本方式</title>
+    <url>/2020/08/28/windows%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/windows%E5%9B%BA%E5%AE%9AIP%E6%96%B9%E5%BC%8F/</url>
+    <content><![CDATA[<h3 id="Windows-DHCP方式bat-脚本"><a href="#Windows-DHCP方式bat-脚本" class="headerlink" title="Windows DHCP方式bat 脚本"></a>Windows DHCP方式bat 脚本</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netsh interface ip set address name=&quot;以太网 2&quot; source=dhcp </span><br></pre></td></tr></table></figure>
+
+
+<h3 id="Windows-固定IP方式bat-脚本"><a href="#Windows-固定IP方式bat-脚本" class="headerlink" title="Windows 固定IP方式bat 脚本"></a>Windows 固定IP方式bat 脚本</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">set ipaddr=172.16.13.15</span><br><span class="line">set mask=255.255.255.0</span><br><span class="line">set gateway=172.16.13.1</span><br><span class="line">set dnsaddr=114.114.114.114</span><br><span class="line">netsh interface ip set address name=&quot;以太网 2&quot; source=static address=%ipaddr% mask=%mask% gateway=%gateway% 1</span><br><span class="line">netsh interface ip set dnsservers name=&quot;以太网 2&quot; source=static address=%dnsaddr%</span><br><span class="line">netsh interface ip add address &quot;以太网 2&quot; 192.168.1.180 255.255.255.0</span><br><span class="line">netsh interface ip add address &quot;以太网 2&quot; 192.168.10.180 255.255.255.0</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">pause</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>windows常用命令</category>
+      </categories>
+      <tags>
+        <tag>Windows</tag>
       </tags>
   </entry>
   <entry>
@@ -623,8 +623,8 @@
 <li><p>摄像机验证</p>
 <p>RTSP摄像机请确保和设备在同一网络下，测试方法：在盒子里ping 相机的IP</p>
 <p>rtsp地址格式参考如下：</p>
-<p>大华：rtsp://admin:<a href="mailto:&#101;&#98;&#49;&#x32;&#51;&#52;&#53;&#54;&#x40;&#x31;&#57;&#50;&#46;&#49;&#x36;&#x38;&#46;&#x31;&#46;&#49;&#49;&#x35;">&#101;&#98;&#49;&#x32;&#51;&#52;&#53;&#54;&#x40;&#x31;&#57;&#50;&#46;&#49;&#x36;&#x38;&#46;&#x31;&#46;&#49;&#49;&#x35;</a>:554/cam/realmonitor?channel=1&amp;subtype=0</p>
-<p>海康：rtsp://admin:<a href="mailto:&#x65;&#x62;&#x31;&#50;&#x33;&#x34;&#x35;&#x36;&#64;&#x31;&#x39;&#50;&#46;&#49;&#54;&#56;&#x2e;&#x31;&#46;&#x31;&#x36;&#56;">&#x65;&#x62;&#x31;&#50;&#x33;&#x34;&#x35;&#x36;&#64;&#x31;&#x39;&#50;&#46;&#49;&#54;&#56;&#x2e;&#x31;&#46;&#x31;&#x36;&#56;</a>:554/h264/ch1/main/av_stream</p>
+<p>大华：rtsp://admin:<a href="mailto:&#101;&#98;&#49;&#x32;&#51;&#52;&#x35;&#54;&#64;&#x31;&#x39;&#50;&#46;&#x31;&#54;&#x38;&#46;&#49;&#46;&#49;&#x31;&#53;">&#101;&#98;&#49;&#x32;&#51;&#52;&#x35;&#54;&#64;&#x31;&#x39;&#50;&#46;&#x31;&#54;&#x38;&#46;&#49;&#46;&#49;&#x31;&#53;</a>:554/cam/realmonitor?channel=1&amp;subtype=0</p>
+<p>海康：rtsp://admin:<a href="mailto:&#x65;&#x62;&#49;&#x32;&#x33;&#52;&#53;&#54;&#x40;&#x31;&#57;&#50;&#46;&#49;&#54;&#x38;&#46;&#x31;&#x2e;&#49;&#x36;&#56;">&#x65;&#x62;&#49;&#x32;&#x33;&#52;&#53;&#54;&#x40;&#x31;&#57;&#50;&#46;&#49;&#54;&#x38;&#46;&#x31;&#x2e;&#49;&#x36;&#56;</a>:554/h264/ch1/main/av_stream</p>
 <p>rtsp视频流解析测试：</p>
 <ol>
 <li><p>VLC：用VLC播放rtsp地址，测试是否能正常播放。</p>
@@ -632,7 +632,7 @@
 <li><p>设备终端：将下面的命令其中的”rtsp://……”更换成当时的rtsp地址，然后在盒子里任意目录下执行，等待数秒后，会在当前目录下生成若干张jpg图片文件，如果没有生成jpg文件，说明gstreamer解析视频流失败，请再次检查网络、rtsp地址格式是否错误、缺少必要信息等。</p>
 </li>
 </ol>
-<p>gst-launch-1.0 rtspsrc location=”rtsp://admin:<a href="mailto:&#x73;&#122;&#100;&#x79;&#x63;&#115;&#x31;&#50;&#51;&#x34;&#53;&#54;&#64;&#49;&#x37;&#50;&#46;&#49;&#54;&#x2e;&#49;&#x32;&#46;&#49;&#54;&#x39;">&#x73;&#122;&#100;&#x79;&#x63;&#115;&#x31;&#50;&#51;&#x34;&#53;&#54;&#64;&#49;&#x37;&#50;&#46;&#49;&#54;&#x2e;&#49;&#x32;&#46;&#49;&#54;&#x39;</a>:554/h264/ch1/main/av_stream” latency=0 ! rtph264depay ! h264parse ! omxh264dec ! videorate ! video/x-raw,framerate=2/1 ! videoconvert ! jpegenc !  multifilesink location=”frame%d.jpg”<br>gst-launch-1.0 rtspsrc location=”rtsp://admin:<a href="mailto:&#97;&#100;&#x6d;&#x69;&#x6e;&#64;&#49;&#x37;&#50;&#x2e;&#49;&#54;&#46;&#49;&#x32;&#46;&#49;&#57;&#57;">&#97;&#100;&#x6d;&#x69;&#x6e;&#64;&#49;&#x37;&#50;&#x2e;&#49;&#54;&#46;&#49;&#x32;&#46;&#49;&#57;&#57;</a>/stream_main” latency=0 ! rtph264depay ! h264parse ! omxh264dec ! videorate ! video/x-raw,framerate=2/1 ! videoconvert ! jpegenc !  multifilesink location=”frame%d.jpg” </p>
+<p>gst-launch-1.0 rtspsrc location=”rtsp://admin:<a href="mailto:&#x73;&#122;&#x64;&#x79;&#x63;&#x73;&#x31;&#50;&#51;&#x34;&#x35;&#54;&#x40;&#49;&#55;&#50;&#46;&#49;&#x36;&#46;&#x31;&#x32;&#x2e;&#x31;&#x36;&#57;">&#x73;&#122;&#x64;&#x79;&#x63;&#x73;&#x31;&#50;&#51;&#x34;&#x35;&#54;&#x40;&#49;&#55;&#50;&#46;&#49;&#x36;&#46;&#x31;&#x32;&#x2e;&#x31;&#x36;&#57;</a>:554/h264/ch1/main/av_stream” latency=0 ! rtph264depay ! h264parse ! omxh264dec ! videorate ! video/x-raw,framerate=2/1 ! videoconvert ! jpegenc !  multifilesink location=”frame%d.jpg”<br>gst-launch-1.0 rtspsrc location=”rtsp://admin:<a href="mailto:&#x61;&#100;&#x6d;&#x69;&#x6e;&#64;&#49;&#55;&#x32;&#x2e;&#x31;&#x36;&#46;&#49;&#x32;&#46;&#x31;&#57;&#57;">&#x61;&#100;&#x6d;&#x69;&#x6e;&#64;&#49;&#55;&#x32;&#x2e;&#x31;&#x36;&#46;&#49;&#x32;&#46;&#x31;&#57;&#57;</a>/stream_main” latency=0 ! rtph264depay ! h264parse ! omxh264dec ! videorate ! video/x-raw,framerate=2/1 ! videoconvert ! jpegenc !  multifilesink location=”frame%d.jpg” </p>
 </li>
 </ul>
 ]]></content>
